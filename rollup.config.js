@@ -12,5 +12,6 @@ export default {
 		typescript({
 			typescript: require('typescript')
 		})
-	]
+	],
+	sourcemap: true
 };

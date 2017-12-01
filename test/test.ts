@@ -1,8 +1,44 @@
 import * as assert from 'assert';
-import * as UNTITLED from '../src/index';
+import keyframes from '../src/index';
+
+require('console-group').install();
 
 describe('spline-keyframes', () => {
-	it('has tests', () => {
-		assert.ok(false);
+	it('returns an exact value', () => {
+		const curve = keyframes();
+
+		curve.add([
+			{ time: 0, value: 10 },
+			{ time: 1, value: 20 },
+			{ time: 2, value: 30 }
+		]);
+
+		assert.equal(curve.at(1), 20);
+	});
+
+	it('returns an intermedia value', () => {
+		const curve = keyframes();
+
+		curve.add([
+			{ time: 0, value: 0 },
+			{ time: 1, value: 100 },
+			{ time: 2, value: 50 }
+		]);
+
+		const v = curve.at(0.5);
+		assert.ok(0 < v && v < 100);
+	});
+
+	it('clamps values', () => {
+		const curve = keyframes();
+
+		curve.add([
+			{ time: 0, value: 10 },
+			{ time: 1, value: 20 },
+			{ time: 2, value: 30 }
+		]);
+
+		assert.equal(curve.at(-1), 10);
+		assert.equal(curve.at(3), 30);
 	});
 });

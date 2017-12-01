@@ -12,6 +12,7 @@
   "devDependencies": {
     "@types/mocha": "^2.2.44",
     "@types/node": "^8.0.53",
+    "console-group": "^0.3.3",
     "glob": "^7.1.2",
     "mocha": "^4.0.1",
     "rollup": "^0.52.0",
@@ -25,7 +26,8 @@
     "build-declarations": "tsc -d && node scripts/move-type-declarations.js",
     "build": "npm run build-declarations && rollup -c",
     "test": "mocha --opts mocha.opts",
-    "pretest": "npm run build"
+    "pretest": "npm run build",
+    "dev": "rollup -cw"
   },
   "license": "LIL"
 }
