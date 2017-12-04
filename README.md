@@ -1,5 +1,7 @@
 # spline-keyframes
 
+## work in progress...
+
 Generate a spline that smoothly interpolates between a set of keyframes. Demo TODO.
 
 Based on http://scaledinnovation.com/analytics/splines/aboutSplines.html.
