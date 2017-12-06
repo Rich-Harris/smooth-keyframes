@@ -1,5 +1,10 @@
 # spline-keyframes changelog
 
+## 0.0.4
+
+* Binary search
+* Concentrate sampling on curviest segments, omit redundant samples
+
 ## 0.0.3
 
 * Fix NaN bug with consective frames with no change in value
