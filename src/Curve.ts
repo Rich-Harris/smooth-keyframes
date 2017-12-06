@@ -13,8 +13,6 @@ export class Curve {
 	segments: Segment[];
 	points: Array<{ time: number, value: number }>;
 
-	_dirty: boolean;
-
 	constructor(frames: KeyframeData[], opts?: CurveOptions) {
 		this.tension = opts && 'tension' in opts ? opts.tension : 0.5;
 		this.samples = opts && 'samples' in opts ? opts.samples : 100;
@@ -62,7 +60,7 @@ export class Curve {
 		const total_magnitude = this.segments.reduce((m, segment) => m + segment.magnitude, 0);
 
 		this.segments.forEach(segment => {
-			segment.points(
+			segment.addPoints(
 				Math.floor(n * segment.magnitude / total_magnitude),
 				this.points
 			);

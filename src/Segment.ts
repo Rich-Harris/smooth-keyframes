@@ -30,7 +30,7 @@ export class Segment {
 		this.magnitude = this.p3.subtract(this.p0).magnitude();
 	}
 
-	points(n: number, points: Array<{ time: number, value: number }>) {
+	addPoints(n: number, points: Array<{ time: number, value: number }>) {
 		const { p0, p1, p2, p3 } = this;
 
 		if (p3.value === p0.value) n = 1;
