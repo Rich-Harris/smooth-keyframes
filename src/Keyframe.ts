@@ -42,10 +42,28 @@ export class Keyframe {
 
 			this.leftControlPoint = line.scale(-d0 / (d0 + d1));
 			this.rightControlPoint = line.scale(d1 / (d1 + d0));
+
+			const value_multiplier = Math.min(
+				0.5 * (previous.value - this.value) / this.leftControlPoint.value,
+				0.5 * (next.value - this.value) / this.rightControlPoint.value,
+				1
+			);
+
+			const time_multiplier = Math.min(
+				0.5 * (previous.time - this.time) / this.leftControlPoint.time,
+				0.5 * (next.time - this.time) / this.rightControlPoint.time,
+				1
+			);
+
+			this.leftControlPoint.time *= time_multiplier;
+			this.rightControlPoint.time *= time_multiplier;
+
+			this.leftControlPoint.value *= value_multiplier;
+			this.rightControlPoint.value *= value_multiplier;
 		} else if (previous) {
-			this.leftControlPoint = new Vector(previous.time - this.time, 0).scale(this.tension);
+			this.leftControlPoint = new Vector(previous.time - this.time, 0).scale(Math.min(this.tension, 0.5));
 		} else if (next) {
-			this.rightControlPoint = new Vector(next.time - this.time, 0).scale(this.tension);
+			this.rightControlPoint = new Vector(next.time - this.time, 0).scale(Math.min(this.tension, 0.5));
 		}
 	}
 

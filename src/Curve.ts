@@ -73,12 +73,14 @@ export class Curve {
 		if (time <= first.time) return first.value;
 		if (time >= last.time) return last.value;
 
+		// TODO binary search
 		for (let i = 0; i < this.points.length - 1; i += 1) {
 			const a = this.points[i];
 			const b = this.points[i + 1];
 
 			if (a.time <= time && time < b.time) {
-				return a.value + (time - a.time) * (b.value - a.value);
+				const p = (time - a.time) / (b.time - a.time);
+				return a.value + p * (b.value - a.value);
 			}
 		}
 	}
