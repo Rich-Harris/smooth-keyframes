@@ -20,14 +20,20 @@ export class Curve {
 		this.samples = opts && 'samples' in opts ? opts.samples : 100;
 
 		this.frames = frames
-			.map((data: KeyframeData) => new Keyframe(this, data))
 			.sort((a: Keyframe, b: Keyframe) => {
 				if (a.time === b.time) {
 					throw new Error('Cannot have multiple keyframes with the same `time`');
 				}
 
 				return a.time - b.time;
-			});
+			})
+			.filter((frame, i) => {
+				const previous = frames[i - 1];
+				const next = frames[i + 1];
+				if (!previous || !next) return true; // always include endpoints
+				return (previous.value !== frame.value) || (next.value !== frame.value);
+			})
+			.map((data: KeyframeData) => new Keyframe(this, data));
 
 		this.frames.forEach((frame, i) => {
 			frame._link(this.frames[i - 1], this.frames[i + 1]);
@@ -55,7 +61,7 @@ export class Curve {
 
 		this.segments.forEach(segment => {
 			segment.points(
-				n * segment.duration / duration,
+				Math.floor(n * segment.duration / duration),
 				this.points
 			);
 		});
