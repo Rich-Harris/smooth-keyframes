@@ -75,20 +75,31 @@ export class Curve {
 	}
 
 	at(time: number) {
+		if (typeof time !== 'number' || isNaN(time)) throw new Error('Expected a number');
+
 		const first = this.frames[0];
 		const last = this.frames[this.frames.length - 1];
 
 		if (time <= first.time) return first.value;
 		if (time >= last.time) return last.value;
 
-		// TODO binary search
-		for (let i = 0; i < this.points.length - 1; i += 1) {
-			const a = this.points[i];
-			const b = this.points[i + 1];
+		let low = 0;
+		let high = this.points.length - 2;
+
+		while (low < high) {
+			const mid = (low + high) >> 1;
+			const a = this.points[mid];
+			const b = this.points[mid + 1];
 
 			if (a.time <= time && time < b.time) {
 				const p = (time - a.time) / (b.time - a.time);
 				return a.value + p * (b.value - a.value);
+			}
+
+			if (time < a.time) {
+				high = mid;
+			} else {
+				low = mid;
 			}
 		}
 	}
