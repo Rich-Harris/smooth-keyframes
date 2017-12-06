@@ -59,9 +59,11 @@ export class Curve {
 
 		this.points = [];
 
+		const total_magnitude = this.segments.reduce((m, segment) => m + segment.magnitude, 0);
+
 		this.segments.forEach(segment => {
 			segment.points(
-				Math.floor(n * segment.duration / duration),
+				Math.floor(n * segment.magnitude / total_magnitude),
 				this.points
 			);
 		});
