@@ -7,6 +7,10 @@ export type KeyframeData = {
 	tension?: number;
 }
 
+function clamp(n: number, min: number, max: number) {
+	return n < min ? min : n > max ? max : n;
+}
+
 export class Keyframe {
 	curve: Curve;
 	time: number;
@@ -43,11 +47,10 @@ export class Keyframe {
 			this.leftControlPoint = line.scale(-d0 / (d0 + d1));
 			this.rightControlPoint = line.scale(d1 / (d1 + d0));
 
-			const value_multiplier = Math.min(
+			const value_multiplier = clamp(Math.min(
 				0.5 * (previous.value - this.value) / this.leftControlPoint.value,
-				0.5 * (next.value - this.value) / this.rightControlPoint.value,
-				1
-			) || 0;
+				0.5 * (next.value - this.value) / this.rightControlPoint.value
+			) || 0, 0, 1);
 
 			const time_multiplier = Math.min(
 				0.5 * (previous.time - this.time) / this.leftControlPoint.time,
