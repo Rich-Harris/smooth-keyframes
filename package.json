@@ -1,7 +1,7 @@
 {
   "name": "spline-keyframes",
   "description": "Smoothly interpolate between keyframes",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "dist/spline-keyframes.umd.js",
   "module": "dist/spline-keyframes.esm.js",
   "types": "types/index.d.ts",

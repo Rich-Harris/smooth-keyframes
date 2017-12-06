@@ -47,7 +47,7 @@ export class Keyframe {
 				0.5 * (previous.value - this.value) / this.leftControlPoint.value,
 				0.5 * (next.value - this.value) / this.rightControlPoint.value,
 				1
-			);
+			) || 0;
 
 			const time_multiplier = Math.min(
 				0.5 * (previous.time - this.time) / this.leftControlPoint.time,
