@@ -1,16 +1,14 @@
-# spline-keyframes
+# smooth-keyframes
 
 ## work in progress...
 
-Generate a spline that smoothly interpolates between a set of keyframes. Demo TODO.
-
-Based on http://scaledinnovation.com/analytics/splines/aboutSplines.html.
+Generate a curve that smoothly interpolates between a set of keyframes. Demo TODO.
 
 
 ## API
 
 ```js
-import keyframes from 'spline-keyframes';
+import keyframes from 'smooth-keyframes';
 
 const curve = keyframes([
 	{
