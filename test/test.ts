@@ -3,7 +3,7 @@ import keyframes from '../src/index';
 
 require('console-group').install();
 
-describe('spline-keyframes', () => {
+describe('smooth-keyframes', () => {
 	it('returns an exact value', () => {
 		const curve = keyframes([
 			{ time: 0, value: 10 },
