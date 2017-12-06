@@ -12,12 +12,7 @@ Based on http://scaledinnovation.com/analytics/splines/aboutSplines.html.
 ```js
 import keyframes from 'spline-keyframes';
 
-const curve = keyframes({
-	tension: 0.75 // 0-1. Higher = smoother curves. Default is 0.5
-});
-
-// add some keyframes
-curve.add([
+const curve = keyframes([
 	{
 		time: 0,
 		value: 0
@@ -31,7 +26,9 @@ curve.add([
 		value: 50,
 		tension: 0.5 // local tension — multiplies global tension, defaults to 1
 	}
-]);
+], {
+	tension: 0.75 // 0-1. Higher = smoother curves. Default is 0.5
+});
 
 // get the value at a given time
 curve.at(-1); // 0
