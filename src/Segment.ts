@@ -24,8 +24,8 @@ export class Segment {
 
 		this.p0 = new Vector(p0.time, p0.value);
 		this.p3 = new Vector(p3.time, p3.value);
-		this.p1 = this.p0.add(p0.rightControlPoint);
-		this.p2 = this.p3.add(p3.leftControlPoint);
+		this.p1 = this.p0.add(p0.control[1]);
+		this.p2 = this.p3.add(p3.control[0]);
 
 		this.magnitude = this.p3.subtract(this.p0).magnitude();
 	}

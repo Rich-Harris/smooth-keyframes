@@ -20,9 +20,7 @@ export class Keyframe {
 	previous: Keyframe;
 	next: Keyframe;
 
-	leftControlPoint: Vector;
-	rightControlPoint: Vector;
-	line: Vector;
+	control: [Vector, Vector];
 
 	constructor(curve: Curve, data: KeyframeData) {
 		this.curve = curve;
@@ -35,8 +33,7 @@ export class Keyframe {
 		this.previous = previous;
 		this.next = next;
 
-		this.leftControlPoint = null;
-		this.rightControlPoint = null;
+		this.control = [null, null];
 
 		if (previous && next) {
 			const line = new Vector(next.time - previous.time, next.value - previous.value).scale(this.tension);
@@ -44,33 +41,29 @@ export class Keyframe {
 			const d0 = new Vector(this.time - previous.time, this.value - previous.value).magnitude();
 			const d1 = new Vector(next.time - this.time, next.value - this.value).magnitude();
 
-			this.leftControlPoint = line.scale(-d0 / (d0 + d1));
-			this.rightControlPoint = line.scale(d1 / (d1 + d0));
+			this.control[0] = line.scale(-d0 / (d0 + d1));
+			this.control[1] = line.scale(d1 / (d1 + d0));
 
 			const value_multiplier = clamp(Math.min(
-				0.5 * (previous.value - this.value) / this.leftControlPoint.value,
-				0.5 * (next.value - this.value) / this.rightControlPoint.value
+				0.5 * (previous.value - this.value) / this.control[0].value,
+				0.5 * (next.value - this.value) / this.control[1].value
 			) || 0, 0, 1);
 
 			const time_multiplier = Math.min(
-				0.5 * (previous.time - this.time) / this.leftControlPoint.time,
-				0.5 * (next.time - this.time) / this.rightControlPoint.time,
+				0.5 * (previous.time - this.time) / this.control[0].time,
+				0.5 * (next.time - this.time) / this.control[1].time,
 				1
 			);
 
-			this.leftControlPoint.time *= time_multiplier;
-			this.rightControlPoint.time *= time_multiplier;
+			this.control[0].time *= time_multiplier;
+			this.control[1].time *= time_multiplier;
 
-			this.leftControlPoint.value *= value_multiplier;
-			this.rightControlPoint.value *= value_multiplier;
+			this.control[0].value *= value_multiplier;
+			this.control[1].value *= value_multiplier;
 		} else if (previous) {
-			this.leftControlPoint = new Vector(previous.time - this.time, 0).scale(Math.min(this.tension, 0.5));
+			this.control[0] = new Vector(previous.time - this.time, 0).scale(Math.min(this.tension, 0.5));
 		} else if (next) {
-			this.rightControlPoint = new Vector(next.time - this.time, 0).scale(Math.min(this.tension, 0.5));
+			this.control[1] = new Vector(next.time - this.time, 0).scale(Math.min(this.tension, 0.5));
 		}
-	}
-
-	remove() {
-		// TODO
 	}
 }
