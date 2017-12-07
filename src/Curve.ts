@@ -84,7 +84,7 @@ export class Curve {
 		let low = 0;
 		let high = this.points.length - 2;
 
-		while (low < high) {
+		while (low <= high) {
 			const mid = (low + high) >> 1;
 			const a = this.points[mid];
 			const b = this.points[mid + 1];
@@ -95,9 +95,9 @@ export class Curve {
 			}
 
 			if (time < a.time) {
-				high = mid;
+				high = mid - 1;
 			} else {
-				low = mid;
+				low = mid + 1;
 			}
 		}
 	}
