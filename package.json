@@ -1,7 +1,7 @@
 {
   "name": "smooth-keyframes",
   "description": "Smoothly interpolate between keyframes",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "main": "dist/smooth-keyframes.umd.js",
   "module": "dist/smooth-keyframes.esm.js",
   "types": "types/index.d.ts",

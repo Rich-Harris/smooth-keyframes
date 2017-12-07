@@ -1,5 +1,9 @@
 # spline-keyframes changelog
 
+## 0.0.5
+
+* Fix broken binary search that would occasionally result in infinite loop
+
 ## 0.0.4
 
 * Binary search
