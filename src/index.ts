@@ -2,6 +2,9 @@ function sign(x: number) {
 	return x < 0 ? -1 : 1;
 }
 
+// Adapted from https://github.com/d3/d3-shape/blob/master/src/curve/monotone.js
+// https://github.com/d3/d3-shape/blob/master/LICENSE
+
 // Calculate the slopes of the tangents (Hermite-type interpolation) based on
 // the following paper: Steffen, M. 1990. A Simple Method for Monotonic
 // Interpolation in One Dimension. Astronomy and Astrophysics, Vol. 239, NO.
@@ -28,8 +31,6 @@ export default function keyframes(frames: Array<[number, number]>) {
 	const segments: Array<{
 		x0: number,
 		y0: number,
-		y0c: number,
-		y1c: number,
 		x1: number,
 		y1: number,
 		width: number,
@@ -45,16 +46,12 @@ export default function keyframes(frames: Array<[number, number]>) {
 	let tangent0 = NaN;
 	let state = 1;
 
-	function handle_point(tangent0: number, tangent1: number) {
-		const dx = (x1 - x0) / 3;
-
+	function add_segment(tangent0: number, tangent1: number) {
 		segments.push({
 			x0,
 			y0,
 			x1,
 			y1,
-			y0c: y0 + dx * tangent0,
-			y1c: y1 - dx * tangent1,
 			width: (x1 - x0),
 			gradient: (y1 - y0) / (x1 - x0),
 			tangent0,
@@ -62,7 +59,7 @@ export default function keyframes(frames: Array<[number, number]>) {
 		});
 	}
 
-	frames.forEach((point, i) => {
+	frames.forEach(point => {
 		const [x2, y2] = point;
 
 		let tangent1 = NaN;
@@ -77,7 +74,7 @@ export default function keyframes(frames: Array<[number, number]>) {
 				break;
 			default:
 				tangent1 = slope3(x0, x1, x2, y0, y1, y2)
-				handle_point(tangent0, tangent1);
+				add_segment(tangent0, tangent1);
 				break;
 		}
 
@@ -89,9 +86,9 @@ export default function keyframes(frames: Array<[number, number]>) {
 	const first = frames[0];
 	const last = frames[frames.length - 1];
 
-	handle_point(tangent0, 0); // final tangent, like starting tangent, is 0
+	add_segment(tangent0, 0); // final tangent, like starting tangent, is 0
 
-	function y(x: number) {
+	return (x: number) => {
 		if (x <= first[0]) return first[1];
 		if (x >= last[0]) return last[1];
 
@@ -125,9 +122,5 @@ export default function keyframes(frames: Array<[number, number]>) {
 				low = mid + 1;
 			}
 		}
-	}
-
-	y.segments = segments;
-
-	return y;
+	};
 }
