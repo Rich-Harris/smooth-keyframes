@@ -11,34 +11,22 @@ Generate a curve that smoothly interpolates between a set of keyframes. Demo TOD
 import keyframes from 'smooth-keyframes';
 
 const curve = keyframes([
-	{
-		time: 0,
-		value: 0
-	},
-	{
-		time: 50,
-		value: 100
-	},
-	{
-		time: 100,
-		value: 50,
-		tension: 0.5 // local tension — multiplies global tension, defaults to 1
-	}
-], {
-	tension: 0.75 // 0-1. Higher = smoother curves. Default is 0.5
-});
+	[0,0],
+	[50, 100],
+	[100, 50]
+]);
 
 // get the value at a given time
-curve.at(-1); // 0
-curve.at(0); // 0
-curve.at(25); // TODO
-curve.at(50); // 100
-curve.at(75); // TOD
-curve.at(100); // 50
-curve.at(101); // 50
+curve(-1); // 0
+curve(0); // 0
+curve(25); // TODO
+curve(50); // 100
+curve(75); // TODO
+curve(100); // 50
+curve(101); // 50
 ```
 
 
 ## License
 
-[LIL](LICENSE)
+[MIT](LICENSE)
