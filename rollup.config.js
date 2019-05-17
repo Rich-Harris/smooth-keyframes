@@ -4,14 +4,12 @@ import pkg from './package.json';
 export default {
 	input: 'src/index.ts',
 	output: [
-		{ file: pkg.main, format: 'umd' },
-		{ file: pkg.module, format: 'es' }
+		{ file: pkg.main, format: 'umd', name: 'keyframes', sourcemap: true },
+		{ file: pkg.module, format: 'es', sourcemap: true }
 	],
-	name: 'keyframes',
 	plugins: [
 		typescript({
 			typescript: require('typescript')
 		})
-	],
-	sourcemap: true
+	]
 };
