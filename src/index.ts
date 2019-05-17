@@ -25,20 +25,11 @@ export default function keyframes(frames: Array<[number, number]>) {
 
 	frames = frames.slice().sort((a, b) => a[0] - b[0]);
 
-	// duplicate first and last points, so that tangent is horizontal
-	// at start and end. TODO a neater way?
-	frames.unshift([frames[0][0] - 1, frames[0][1]]);
-	frames.push([frames[frames.length - 1][0] + 1, frames[frames.length - 1][1]]);
-
-	let last_x: number;
-	let last_y: number;
+	let last_x = frames[0][0] - 1;
+	let last_y = frames[0][1];
 	const segments: Array<{ x1: number, y1: number, c1x: number, c1y: number, c2x: number, c2y: number, x2: number, y2: number }> = [];
 
 	const context = {
-		moveTo: (x: number, y: number) => {
-			last_x = x;
-			last_y = y;
-		},
 		bezierCurveTo: (c1x: number, c1y: number, c2x: number, c2y: number, x2: number, y2: number) => {
 			segments.push({
 				x1: last_x,
@@ -58,7 +49,7 @@ export default function keyframes(frames: Array<[number, number]>) {
 	let _y0 = NaN;
 	let _y1 = NaN;
 	let _t0 = NaN;
-	let _point = 0;
+	let _point = 1;
 
 	function handle_point(t0: number, t1: number) {
 		var x0 = _x0,
@@ -77,16 +68,12 @@ export default function keyframes(frames: Array<[number, number]>) {
 		);
 	}
 
-	frames.forEach(point => {
+	frames.forEach((point, i) => {
 		let [x, y] = point;
 
 		var t1 = NaN;
 
 		switch (_point) {
-			case 0:
-				_point = 1;
-				context.moveTo(x, y);
-				break;
 			case 1:
 				_point = 2;
 				break;
@@ -104,8 +91,10 @@ export default function keyframes(frames: Array<[number, number]>) {
 		_t0 = t1;
 	});
 
-	const first = frames[1];
-	const last = frames[frames.length - 2];
+	const first = frames[0];
+	const last = frames[frames.length - 1];
+
+	handle_point(_t0, (slope3({ _x0, _x1, _y0, _y1 }, last[0], last[1])));
 
 	function y(x: number) {
 		if (x <= first[0]) return first[1];
