@@ -32,6 +32,7 @@ export default function keyframes(frames: Array<[number, number]>) {
 		y1c: number,
 		x1: number,
 		y1: number,
+		gradient: number,
 		tangent0: number,
 		tangent1: number
 	}> = [];
@@ -53,6 +54,7 @@ export default function keyframes(frames: Array<[number, number]>) {
 			y1,
 			y0c: y0 + dx * tangent0,
 			y1c: y1 - dx * tangent1,
+			gradient: (y1 - y0) / (x1 - x0),
 			tangent0,
 			tangent1
 		});
@@ -95,33 +97,20 @@ export default function keyframes(frames: Array<[number, number]>) {
 			return x >= segment.x0 && x < segment.x1;
 		});
 
-		const t = (x - segment.x0) / (segment.x1 - segment.x0);
-		const gradient = (segment.y1 - segment.y0) / (segment.x1 - segment.x0);
 		const dx0 = (x - segment.x0);
 		const dx1 = (x - segment.x1);
 
+		const t = dx0 / (segment.x1 - segment.x0);
+
 		let y = segment.y0 + t * (segment.y1 - segment.y0);
 
-		const control_point_1_y_at_t = segment.y0 + dx0 * segment.tangent0;
-		const control_point_2_y_at_t = segment.y1 + dx1 * segment.tangent1;
+		const influence0 = (segment.y0 + dx0 * segment.tangent0) - y;
+		const influence1 = (segment.y1 + dx1 * segment.tangent1) - y;
 
-		const control_point_1_dy_at_t = control_point_1_y_at_t - y;
-		const control_point_2_dy_at_t = control_point_2_y_at_t - y;
-
-		const offset0 = dx0 * segment.tangent0;
-		const offset1 = dx1 * segment.tangent1;
-
-		// console.log({
-		// 	control_point_1_dy_at_t,
-		// 	control_point_2_dy_at_t,
-		// 	offset0,
-		// 	offset1
-		// })
-
-		y += ((1 - t) ** 2) * control_point_1_dy_at_t;
-		y += (t ** 2) * control_point_2_dy_at_t;
-
-		return y;
+		return segment.y0 + dx0 * segment.gradient + (
+			((1 - t) ** 2) * influence0 +
+			(t ** 2) * influence1
+		);
 	}
 
 	y.segments = segments;
