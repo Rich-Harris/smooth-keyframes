@@ -1,5 +1,9 @@
 # spline-keyframes changelog
 
+## 1.0.0
+
+* Rewrite, update API
+
 ## 0.0.5
 
 * Fix broken binary search that would occasionally result in infinite loop
