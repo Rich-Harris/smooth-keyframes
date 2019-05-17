@@ -32,6 +32,7 @@ export default function keyframes(frames: Array<[number, number]>) {
 		y1c: number,
 		x1: number,
 		y1: number,
+		width: number,
 		gradient: number,
 		tangent0: number,
 		tangent1: number
@@ -54,6 +55,7 @@ export default function keyframes(frames: Array<[number, number]>) {
 			y1,
 			y0c: y0 + dx * tangent0,
 			y1c: y1 - dx * tangent1,
+			width: (x1 - x0),
 			gradient: (y1 - y0) / (x1 - x0),
 			tangent0,
 			tangent1
@@ -100,14 +102,14 @@ export default function keyframes(frames: Array<[number, number]>) {
 		const dx0 = (x - segment.x0);
 		const dx1 = (x - segment.x1);
 
-		const t = dx0 / (segment.x1 - segment.x0);
+		const t = dx0 / segment.width;
 
-		let y = segment.y0 + t * (segment.y1 - segment.y0);
+		let y = segment.y0 + dx0 * segment.gradient;
 
 		const influence0 = (segment.y0 + dx0 * segment.tangent0) - y;
 		const influence1 = (segment.y1 + dx1 * segment.tangent1) - y;
 
-		return segment.y0 + dx0 * segment.gradient + (
+		return y + (
 			((1 - t) ** 2) * influence0 +
 			(t ** 2) * influence1
 		);
