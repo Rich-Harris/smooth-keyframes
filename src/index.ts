@@ -25,24 +25,7 @@ export default function keyframes(frames: Array<[number, number]>) {
 
 	frames = frames.slice().sort((a, b) => a[0] - b[0]);
 
-	let last_x = frames[0][0] - 1;
-	let last_y = frames[0][1];
 	const segments: Array<{ x1: number, y1: number, c1x: number, c1y: number, c2x: number, c2y: number, x2: number, y2: number }> = [];
-
-	const context = {
-		bezierCurveTo: (c1x: number, c1y: number, c2x: number, c2y: number, x2: number, y2: number) => {
-			segments.push({
-				x1: last_x,
-				y1: last_y,
-				c1x, c1y, c2x, c2y,
-				x2,
-				y2
-			});
-
-			last_x = x2;
-			last_y = y2;
-		}
-	};
 
 	let _x0 = NaN;
 	let _x1 = NaN;
@@ -52,20 +35,18 @@ export default function keyframes(frames: Array<[number, number]>) {
 	let _point = 1;
 
 	function handle_point(t0: number, t1: number) {
-		var x0 = _x0,
-			y0 = _y0,
-			x1 = _x1,
-			y1 = _y1,
-			dx = (x1 - x0) / 3;
+		var dx = (_x1 - _x0) / 3;
 
-		context.bezierCurveTo(
-			x0 + dx,
-			y0 + dx * t0,
-			x1 - dx,
-			y1 - dx * t1,
-			x1,
-			y1
-		);
+		segments.push({
+			x1: _x0,
+			y1: _y0,
+			c1x: _x0 + dx,
+			c1y: _y0 + dx * t0,
+			c2x: _x1 - dx,
+			c2y: _y1 - dx * t1,
+			x2: _x1,
+			y2: _y1
+		});
 	}
 
 	frames.forEach((point, i) => {
@@ -94,7 +75,7 @@ export default function keyframes(frames: Array<[number, number]>) {
 	const first = frames[0];
 	const last = frames[frames.length - 1];
 
-	handle_point(_t0, (slope3({ _x0, _x1, _y0, _y1 }, last[0], last[1])));
+	handle_point(_t0, (slope3({ _x0, _x1, _y0, _y1 }, last[0] + 1, last[1])));
 
 	function y(x: number) {
 		if (x <= first[0]) return first[1];
