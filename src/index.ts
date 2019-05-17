@@ -95,24 +95,36 @@ export default function keyframes(frames: Array<[number, number]>) {
 		if (x <= first[0]) return first[1];
 		if (x >= last[0]) return last[1];
 
-		const segment = segments.find(segment => {
-			return x >= segment.x0 && x < segment.x1;
-		});
+		let low = 0;
+		let high = segments.length - 1;
 
-		const dx0 = (x - segment.x0);
-		const dx1 = (x - segment.x1);
+		while (low <= high) {
+			const mid = (low + high) >> 1;
+			const segment = segments[mid];
 
-		const t = dx0 / segment.width;
+			if (segment.x0 <= x && x < segment.x1) {
+				const dx0 = (x - segment.x0);
+				const dx1 = (x - segment.x1);
 
-		let y = segment.y0 + dx0 * segment.gradient;
+				const t = dx0 / segment.width;
 
-		const influence0 = (segment.y0 + dx0 * segment.tangent0) - y;
-		const influence1 = (segment.y1 + dx1 * segment.tangent1) - y;
+				let y = segment.y0 + dx0 * segment.gradient;
 
-		return y + (
-			((1 - t) ** 2) * influence0 +
-			(t ** 2) * influence1
-		);
+				const influence0 = (segment.y0 + dx0 * segment.tangent0) - y;
+				const influence1 = (segment.y1 + dx1 * segment.tangent1) - y;
+
+				return y + (
+					((1 - t) ** 2) * influence0 +
+					(t ** 2) * influence1
+				);
+			}
+
+			if (x < segment.x0) {
+				high = mid - 1;
+			} else {
+				low = mid + 1;
+			}
+		}
 	}
 
 	y.segments = segments;
