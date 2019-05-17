@@ -25,7 +25,16 @@ export default function keyframes(frames: Array<[number, number]>) {
 
 	frames = frames.slice().sort((a, b) => a[0] - b[0]);
 
-	const segments: Array<{ x0: number, y0: number, y0c: number, y1c: number, x1: number, y1: number }> = [];
+	const segments: Array<{
+		x0: number,
+		y0: number,
+		y0c: number,
+		y1c: number,
+		x1: number,
+		y1: number,
+		tangent0: number,
+		tangent1: number
+	}> = [];
 
 	let x0 = NaN;
 	let x1 = NaN;
@@ -43,7 +52,9 @@ export default function keyframes(frames: Array<[number, number]>) {
 			x1,
 			y1,
 			y0c: y0 + dx * tangent0,
-			y1c: y1 - dx * tangent1
+			y1c: y1 - dx * tangent1,
+			tangent0,
+			tangent1
 		});
 	}
 
@@ -85,19 +96,27 @@ export default function keyframes(frames: Array<[number, number]>) {
 		});
 
 		const t = (x - segment.x0) / (segment.x1 - segment.x0);
-
-		// extrapolate control point 1 to x2
-		// extrapolate control point 2 to x1
-		const control_point_1_y_at_x2 = segment.y0 + (segment.y0c - segment.y0) * 3;
-		const control_point_2_y_at_x1 = segment.y1 + (segment.y1c - segment.y1) * 3;
+		const gradient = (segment.y1 - segment.y0) / (segment.x1 - segment.x0);
+		const dx0 = (x - segment.x0);
+		const dx1 = (x - segment.x1);
 
 		let y = segment.y0 + t * (segment.y1 - segment.y0);
 
-		const control_point_1_y_at_t = segment.y0 + t * (control_point_1_y_at_x2 - segment.y0);
-		const control_point_2_y_at_t = control_point_2_y_at_x1 + t * (segment.y1 - control_point_2_y_at_x1);
+		const control_point_1_y_at_t = segment.y0 + dx0 * segment.tangent0;
+		const control_point_2_y_at_t = segment.y1 + dx1 * segment.tangent1;
 
 		const control_point_1_dy_at_t = control_point_1_y_at_t - y;
 		const control_point_2_dy_at_t = control_point_2_y_at_t - y;
+
+		const offset0 = dx0 * segment.tangent0;
+		const offset1 = dx1 * segment.tangent1;
+
+		// console.log({
+		// 	control_point_1_dy_at_t,
+		// 	control_point_2_dy_at_t,
+		// 	offset0,
+		// 	offset1
+		// })
 
 		y += ((1 - t) ** 2) * control_point_1_dy_at_t;
 		y += (t ** 2) * control_point_2_dy_at_t;
